@@ -878,14 +878,14 @@ decode_frame(struct pp_video_decoder_s *vd, uint8_t *data, size_t data_len,
     //int len = avcodec_decode_video2(vd->avctx, vd->avframe, &got_frame, &packet);
     int len = 0;
 
-    if (video_ctx->codec_type == AVMEDIA_TYPE_VIDEO ||
-        video_ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
-        len = avcodec_send_packet(video_ctx, pkt);
+    if (vd->avctx->codec_type == AVMEDIA_TYPE_VIDEO ||
+        vd->avctx->codec_type == AVMEDIA_TYPE_AUDIO) {
+        len = avcodec_send_packet(vd->avctx, packet);
         if (len < 0 && len != AVERROR(EAGAIN) && len != AVERROR_EOF) {
     } else {
         if (len >= 0)
-            pkt->size = 0;
-        len = avcodec_receive_frame(video_ctx, frame);
+            packet->size = 0;
+        len = avcodec_receive_frame(vd->avctx, vd->avframe);
         if (len >= 0)
             got_frame = 1;
     //      if (used == AVERROR(EAGAIN) || used == AVERROR_EOF)
