@@ -41,11 +41,11 @@
 #include <GLES2/gl2.h>
 #include <X11/Xlib.h>
 #include <glib.h>
-#include <libavcodec/avcodec.h>
-#include <libavcodec/vaapi.h>
-#include <libavcodec/vdpau.h>
-#include <libavutil/avutil.h>
-#include <libavutil/common.h>
+#include <ffmpeg4.4/libavcodec/avcodec.h>
+#include <ffmpeg4.4/libavcodec/vaapi.h>
+#include <ffmpeg4.4/libavcodec/vdpau.h>
+#include <ffmpeg4.4/libavutil/avutil.h>
+#include <ffmpeg4.4/libavutil/common.h>
 #include <ppapi/c/dev/ppp_video_decoder_dev.h>
 #include <ppapi/c/pp_errors.h>
 #include <pthread.h>
