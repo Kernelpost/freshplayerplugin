@@ -119,7 +119,7 @@ endif()
 # hw accelerated decoding
 set(WITH_HWDEC TRUE CACHE STRING "enable hw accelerated decoding")
 if (WITH_HWDEC)
-    pkg_check_modules(HWDEC ffmpeg4.4 libva libva-x11 vdpau REQUIRED)
+    pkg_check_modules(HWDEC libavcodec libavutil libva libva-x11 vdpau REQUIRED)
     list(APPEND REQ_LIBRARY_DIRS ${HWDEC_LIBRARY_DIRS})
     list(APPEND REQ_INCLUDE_DIRS ${HWDEC_INCLUDE_DIRS})
     list(APPEND REQ_LIBRARIES    ${HWDEC_LIBRARIES})
