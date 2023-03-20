@@ -42,7 +42,6 @@
 #include <X11/Xlib.h>
 #include <glib.h>
 #include <libavcodec/avcodec.h>
-#include <libavcodec/vaapi.h>
 #include <libavcodec/vdpau.h>
 #include <libavutil/avutil.h>
 #include <libavutil/common.h>
@@ -95,6 +94,24 @@ struct AVVDPAUContext {
 // H.264 have maximum 16 reference frames. Plus one current. Plus one frame for delayed
 // release when PPAPI client first calls .decode() and only then calls
 // .reuse_picture_buffer()
+
+struct vaapi_context {
+    void *display;
+    uint32_t config_id;
+    uint32_t context_id;
+    uint32_t pic_param_buf_id;
+    uint32_t iq_matrix_buf_id;
+    uint32_t bitplane_buf_id;
+    uint32_t *slice_buf_ids;
+    unsigned int n_slice_buf_ids;
+    unsigned int slice_buf_ids_alloc;
+    void *slice_params;
+    unsigned int slice_param_size; 
+    unsigned int slice_params_alloc;
+    unsigned int slice_count;
+    const uint8_t *slice_data;
+    uint32_t slice_data_size;
+};
 
 struct pp_video_decoder_s {
     COMMON_STRUCTURE_FIELDS
