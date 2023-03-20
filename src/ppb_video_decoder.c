@@ -41,11 +41,11 @@
 #include <GLES2/gl2.h>
 #include <X11/Xlib.h>
 #include <glib.h>
-#include <ffmpeg4.4/libavcodec/avcodec.h>
-#include <ffmpeg4.4/libavcodec/vaapi.h>
-#include <ffmpeg4.4/libavcodec/vdpau.h>
-#include <ffmpeg4.4/libavutil/avutil.h>
-#include <ffmpeg4.4/libavutil/common.h>
+#include <libavcodec/avcodec.h>
+#include <libavcodec/vaapi.h>
+#include <libavcodec/vdpau.h>
+#include <libavutil/avutil.h>
+#include <libavutil/common.h>
 #include <ppapi/c/dev/ppp_video_decoder_dev.h>
 #include <ppapi/c/pp_errors.h>
 #include <pthread.h>
@@ -873,7 +873,25 @@ decode_frame(struct pp_video_decoder_s *vd, uint8_t *data, size_t data_len,
     // therefore we need to lock
     pthread_mutex_lock(&display.lock);
     int got_frame = 0;
-    int len = avcodec_decode_video2(vd->avctx, vd->avframe, &got_frame, &packet);
+    
+    //int len = avcodec_decode_video2(vd->avctx, vd->avframe, &got_frame, &packet);
+    int len = 0;
+
+    if (video_ctx->codec_type == AVMEDIA_TYPE_VIDEO ||
+        video_ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
+        len = avcodec_send_packet(video_ctx, pkt);
+        if (len < 0 && len != AVERROR(EAGAIN) && len != AVERROR_EOF) {
+    } else {
+        if (len >= 0)
+            pkt->size = 0;
+        len = avcodec_receive_frame(video_ctx, frame);
+        if (len >= 0)
+            got_frame = 1;
+    //      if (used == AVERROR(EAGAIN) || used == AVERROR_EOF)
+    //          used = 0;
+        }
+    }
+
     pthread_mutex_unlock(&display.lock);
     if (len < 0) {
         trace_error("%s, error %d while decoding frame\n", __func__, len);
@@ -1195,7 +1213,7 @@ void
 __attribute__((constructor))
 constructor_ppb_video_decoder(void)
 {
-    avcodec_register_all();
+    //avcodec_register_all();
 
     register_interface(PPB_VIDEODECODER_DEV_INTERFACE_0_16, &ppb_video_decoder_dev_interface_0_16);
     register_resource(PP_RESOURCE_VIDEO_DECODER, ppb_video_decoder_destroy_priv);
