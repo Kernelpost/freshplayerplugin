@@ -429,7 +429,7 @@ get_format(struct AVCodecContext *s, const enum AVPixelFormat *fmt)
     int have_vdpau = 0;
 
     for (int k = 0; fmt[k] != AV_PIX_FMT_NONE; k ++) {
-        if (fmt[k] == AV_PIX_FMT_VAAPI_VLD)
+        if (fmt[k] == AV_PIX_FMT_VAAPI)
             have_vaapi = display.va_available;
         if (fmt[k] == AV_PIX_FMT_VDPAU)
             have_vdpau = display.vdpau_available;
