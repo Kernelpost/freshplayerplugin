@@ -343,7 +343,7 @@ prepare_vaapi_context(struct pp_video_decoder_s *vd, int width, int height)
 
     vd->avctx->hwaccel_context = &vd->va_context;
     vd->hwdec_api = HWDEC_VAAPI;
-    return AV_PIX_FMT_VAAPI_VLD;
+    return AV_PIX_FMT_VAAPI;
 
 err:
     vd->failed_state = 1;
@@ -636,7 +636,7 @@ initialize_decoder(struct pp_video_decoder_s *vd)
 
 #if AVCTX_HAVE_REFCOUNTED_BUFFERS
     vd->avctx->get_buffer2 = get_buffer2;
-    vd->avctx->refcounted_frames = 1;
+    //vd->avctx->refcounted_frames = 1;
 #else
     vd->avctx->get_buffer = get_buffer;
     vd->avctx->release_buffer = release_buffer;
@@ -789,7 +789,7 @@ issue_frame(struct pp_video_decoder_s *vd)
 {
     AVFrame *frame = vd->avframe;
     uint32_t idx = find_free_buffer(vd);
-    int32_t  bitstream_buffer_id = (int32_t)frame->pkt_pts;
+    int32_t  bitstream_buffer_id = (int32_t)frame->pts;
 
     if (idx == (uint32_t)-1) {
         trace_warning("%s, no free buffer available\n", __func__);
@@ -863,11 +863,12 @@ void
 decode_frame(struct pp_video_decoder_s *vd, uint8_t *data, size_t data_len,
              int32_t bitstream_buffer_id)
 {
-    AVPacket packet;
-    av_init_packet(&packet);
-    packet.data = data;
-    packet.size = data_len;
-    packet.pts = bitstream_buffer_id;
+    //AVPacket packet;
+    //av_init_packet(&packet);
+    AVPacket* packet = av_packet_alloc();
+    packet->data = data;
+    packet->size = data_len;
+    packet->pts = bitstream_buffer_id;
 
     // libavcodec can call hw functions, which in turn can call Xlib functions,
     // therefore we need to lock
